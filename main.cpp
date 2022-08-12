@@ -1,5 +1,3 @@
-//#include "head_vtk.h"
-
 #include <vtkAutoInit.h> 
 #include <vtkActor.h>
 #include <vtkCamera.h>
@@ -50,11 +48,86 @@ void colormap_scalerangle();
 void colormap_3d();
 void read_stl();
 void build_read_plot();
+void build_read_plot3D();
 int main()
 {
-	build_read_plot();
+	build_read_plot3D();
 	return 0;
 }
+
+void build_read_plot3D()
+{
+	std::vector<float> coordinates;
+	int nelx = 80; int nely = 40; int nelz = 10;
+	double Lx = 40.0;
+	int n = nelx * nely * nelz;
+	int ncoo = n * 3;
+	coordinates.reserve(ncoo);
+	int j = 0;
+	for (int k = 0; k < nelz; k++)
+	{
+		for (int i = 0; i < nelx; i++)
+		{
+			for (j = 0; j < nely; j++)
+			{
+				coordinates.push_back(i);
+				coordinates.push_back(j);
+				float temp;
+				temp = (float(i) - Lx) * (float(i) - Lx) / 200;
+				coordinates.push_back(k + temp);
+				//coordinates.push_back(k);
+			}
+		}
+	}
+	
+	std::vector<float> value;
+	value.reserve(n);
+	for (int k = 0; k < nelz; k++)
+	{
+		for (int i = 0; i < nelx; i++)
+		{
+			for (int j = 0; j < nely; j++)
+			{
+				float tem = float(i) / float(nelx);
+				value.push_back(tem);
+			}
+		}
+	}
+	std::string name = "D:/vtk_test_project/vtk-top-contour/output/output_info.vtk";
+	std::ofstream ofs(name, std::ios::out);
+	ofs << "# vtk DataFile Version 3.0" << std::endl;
+	ofs << "vtk output" << std::endl;
+	ofs << "ASCII" << std::endl;
+	ofs << "DATASET STRUCTURED_GRID" << std::endl;
+	//ofs << "DATASET POLYDATA" << std::endl;
+	ofs << "DIMENSIONS " << nelx << " " << nely << " " << nelz << std::endl;
+	ofs << "POINTS " << n << " float" << std::endl;
+	int k = 1;
+	for (auto ele : coordinates)
+	{
+		ofs << ele << " ";
+		if (k / 3 == 1)
+		{
+			ofs << std::endl;
+			k = 0;
+		}
+		k++;
+	}
+	ofs << std::endl;
+	/*ofs << "CELL_DATA 21" << std::endl;
+	ofs << "POINT_DATA 32" << std::endl;*/
+	ofs << "CELL_DATA " << (nelx - 1) * (nely - 1) * (nelz - 1) << std::endl;
+	ofs << "POINT_DATA " << n << std::endl;
+	ofs << "SCALARS Density float" << std::endl;
+	ofs << "LOOKUP_TABLE default" << std::endl;
+	k = 1;
+	for (auto ele : value)
+	{
+		ofs << ele << " " << std::endl;
+	}
+	colormap_3d();
+}
+
 
 void build_read_plot()
 {
@@ -94,8 +167,7 @@ void build_read_plot()
 	ofs << "vtk output" << std::endl;
 	ofs << "ASCII" << std::endl;
 	ofs << "DATASET STRUCTURED_GRID" << std::endl;
-	/*ofs << "DIMENSIONS 8 4 1" << std::endl;
-	ofs << "POINTS 32 float" << std::endl;*/
+	//ofs << "DATASET POLYDATA" << std::endl;
 	ofs << "DIMENSIONS " << nelx << " " << nely << " 1" << std::endl;
 	ofs << "POINTS " << n << " float" << std::endl;
 	int k = 1;
@@ -122,7 +194,8 @@ void build_read_plot()
 		ofs << ele << " " << std::endl;
 	}
 	//display_obj();
-	colormap_scalerangle();
+	//colormap_scalerangle();
+	colormap_3d();
 }
 
 void ex03()
@@ -281,7 +354,8 @@ void colormap_3d()
 	lut->Build();
 
 	vtkSmartPointer<vtkStructuredGridReader> reader = vtkSmartPointer<vtkStructuredGridReader>::New();
-	reader->SetFileName("D:/vtk_test_project/vtk_ex/materials/Data/density.vtk");
+	//reader->SetFileName("D:/vtk_test_project/vtk_ex/materials/Data/density.vtk");
+	reader->SetFileName("D:/vtk_test_project/vtk-top-contour/output/output_info.vtk");
 	reader->Update();
 
 	vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
@@ -306,8 +380,8 @@ void colormap_3d()
 	renWin->SetSize(500, 500);
 
 	renWin->Render();
-	iren->Initialize();
-	iren->Start();
+	/*iren->Initialize();
+	iren->Start();*/
 
 }
 
