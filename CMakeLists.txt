@@ -6,11 +6,18 @@ project(${PROJ_NAME})
 set(vtk_prefix "D:/vtksoft/VTK-prefix")
 
 include_directories(${vtk_prefix}/include/vtk-9.2/)
-include_directories(./include/)
 
 add_executable(${PROJ_NAME} main.cpp)
 
 # target_link_libraries(${PROJ_NAME} ${vtk_prefix}/lib/*.lib)
 target_link_libraries(${PROJ_NAME} ${vtk_prefix}/lib/*.lib)
 
-# add_subdirectory(src/testfunctions)
+add_subdirectory(src/MeshData)
+
+target_link_libraries(${PROJ_NAME} target_lib_func)
+
+add_subdirectory(src/BuildData)
+
+target_link_libraries(${PROJ_NAME} target_lib_buildVTK)
+
+

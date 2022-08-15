@@ -1,0 +1,2 @@
+add_library(target_lib_func structMesh.cpp unstructMesh.cpp testFuncs.cpp)
+target_include_directories(target_lib_func PUBLIC include)
