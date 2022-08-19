@@ -29,6 +29,7 @@
 #include <windows.h>
 
 #include <vtkPolyDataReader.h>
+#include <vtkScalarBarActor.h>
 
 typedef vtkActorCollection* vtkActorCollection_Array;
 

@@ -20,4 +20,16 @@ add_subdirectory(src/BuildData)
 
 target_link_libraries(${PROJ_NAME} target_lib_buildVTK)
 
+add_subdirectory(src/FEA-lib)
+
+target_link_libraries(${PROJ_NAME} target_lib_fea)
+
+
+target_link_libraries(target_lib_fea PUBLIC
+	 target_lib_func)
+target_link_libraries(target_lib_buildVTK PUBLIC
+	 target_lib_func)
+
+
+
 
